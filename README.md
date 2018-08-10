@@ -8,7 +8,7 @@ This library provides the `@BindObservable()` decorator, which binds a property 
 ### Installation
 
 ```bash
-npm install psanetra/bind-observable --save
+npm install bind-observable --save
 ```
 
 ### Usage
