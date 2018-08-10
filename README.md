@@ -1,5 +1,6 @@
 # BindObservable decorator
 
+[![npm version](https://badge.fury.io/js/bind-observable.svg)](https://badge.fury.io/js/bind-observable)
 [![Travis](https://travis-ci.org/PSanetra/bind-observable.svg?branch=master)](https://travis-ci.org/PSanetra/bind-observable)
 [![Coverage Status](https://coveralls.io/repos/github/PSanetra/bind-observable/badge.svg?branch=master)](https://coveralls.io/github/PSanetra/bind-observable?branch=master)
 
