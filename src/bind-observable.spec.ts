@@ -43,6 +43,20 @@ describe('BindObservable', () => {
     expect(await instance.myObservable$.pipe(take(1)).toPromise()).toEqual('myValue')
   })
 
+  it('replays only latest value', async () => {
+    class TestClass {
+      @BindObservable('myObservable$')
+      public myProp: string = 'myValue'
+      public myObservable$!: Observable<string>
+    }
+
+    const instance = new TestClass()
+
+    instance.myProp = 'newValue'
+
+    expect(await instance.myObservable$.pipe(take(1)).toPromise()).toEqual('newValue')
+  })
+
   it('property value still gettable', async () => {
     class TestClass {
       @BindObservable('myObservable$')

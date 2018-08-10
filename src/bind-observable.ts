@@ -19,7 +19,7 @@ function subject(instance: any, key: string): ReplaySubject<any> {
   let subject = subjectByProp.get(key)
 
   if (!subject) {
-    subject = new ReplaySubject<any>()
+    subject = new ReplaySubject<any>(1)
     subjectByProp.set(key, subject)
   }
 
