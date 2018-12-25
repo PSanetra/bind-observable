@@ -39,6 +39,8 @@ function valueMap(instance: any): ValueByProp {
 
 /**
  * Binds a property to an observable companion property.
+ * The observable companion property will emit on all assignments (including initialization),
+ * but will not emit undefined if undefined is not explicitly assigned on initialization.
  * @param {string} observableKey
  * optional custom key of the companion property.
  * If not provided, the observableKey is the name of the original property key with a '$' suffix.
