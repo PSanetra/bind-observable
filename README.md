@@ -65,3 +65,29 @@ myInstance.initializedProp$.subscribe(console.log);
 ### Known Bugs
 
 This decorator does not work if used directly on property accessors, but it can be used together with other decorators which add accessors to the `PropertyDescriptor`.
+
+```typescript
+class TestClass {
+  private _myProp: string | undefined;
+
+  public get myProp(): string | undefined {
+    return this._myProp
+  }
+
+  // This does not work!
+  @BindObservable()
+  public set myProp(value: string | undefined) {
+    this._myProp = value
+  }
+
+  private myProp$!: Observable<string | undefined>;
+
+  // This should work, but the decorator order may be important 
+  // if the other decorators modify the return value of the get accessor.
+  @AnyOtherDecorator()
+  @BindObservable()
+  @AnotherDecorator()
+  private myPropWithMultipleDecorators: string = 'initialValue';
+  private myPropWithMultipleDecorators$!: Observable<string>;
+}
+```
