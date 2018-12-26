@@ -32,3 +32,36 @@ myInstance.myProp$.subscribe(console.log);
 myInstance.myProp = 'newValue'
 
 ```
+
+### Details
+
+This decorator adds property accessors to the `PropertyDescriptor` of the decorated property. It will emit the getter value after every underlying setter call. You can use the `emitRawSetterValue` option to emit the raw setter value and not a value, which is possibly modified by underlying setter and getter calls.
+
+The decorator will also emit initial property values only if these values are explictly defined. In the following example the observable `initializedProp$` does emit a `undefined` value. On the other hand `uninitializedProp$` will emit its first value on the first assignment. 
+
+```typescript
+class MyClass {
+
+  @BindObservable()
+  public uninitializedProp?: string;
+  public uninitializedProp$!: Observable<string>;
+
+  @BindObservable()
+  public initializedProp: string | undefined = undefined;
+  public initializedProp$!: Observable<string>;
+
+}
+
+const myInstance = new MyClass();
+
+// Prints nothing to the console
+myInstance.uninitializedProp$.subscribe(console.log);
+
+// Prints 'undefined' to the console
+myInstance.initializedProp$.subscribe(console.log);
+
+```
+
+### Known Bugs
+
+This decorator does not work if used directly on property accessors, but it can be used together with other decorators which add accessors to the `PropertyDescriptor`.
