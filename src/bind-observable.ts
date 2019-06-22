@@ -84,7 +84,7 @@ function redefineAccessorProperty(
       if (emitRawSetterValue || !descriptor.get) {
         companionProp.next(value)
       } else {
-        companionProp.next(descriptor.get())
+        companionProp.next(descriptor.get.call(this))
       }
     },
     get(): any {

@@ -13,11 +13,15 @@ function WrappingDecorator(): PropertyDecorator {
         configurable: descriptor.configurable,
         enumerable: descriptor.enumerable,
         get() {
+          expect(propertyName in this).toBe(true)
+
           if (descriptor.get) {
             return `wrapGet(${descriptor.get.call(this)})`
           }
         },
         set(value) {
+          expect(propertyName in this).toBe(true)
+
           if (descriptor.set) {
             descriptor.set.call(this, `wrapSet(${value})`)
           }
@@ -28,9 +32,13 @@ function WrappingDecorator(): PropertyDecorator {
         configurable: true,
         enumerable: true,
         get() {
+          expect(propertyName in this).toBe(true)
+
           return `wrapGet(${target['@WrappingDecorator.value']})`
         },
         set(value) {
+          expect(propertyName in this).toBe(true)
+
           target['@WrappingDecorator.value'] = `wrapSet(${value})`
         }
       })
