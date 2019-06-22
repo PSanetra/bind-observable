@@ -54,7 +54,7 @@ function redefineSimpleProperty(target: any, propertyKey: string, observableKey:
     enumerable: true,
     set(value) {
       valueMap(this).set(propertyKey, value)
-      subject(this, observableKey).next(value)
+      subject(this, observableKey).next(this[propertyKey])
     },
     get() {
       return valueMap(this).get(propertyKey)
@@ -84,7 +84,7 @@ function redefineAccessorProperty(
       if (emitRawSetterValue || !descriptor.get) {
         companionProp.next(value)
       } else {
-        companionProp.next(descriptor.get.call(this))
+        companionProp.next(this[propertyKey])
       }
     },
     get(): any {

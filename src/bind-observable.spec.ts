@@ -2,7 +2,9 @@ import { BindObservable } from '../src/bind-observable'
 import { Observable } from 'rxjs'
 import { take } from 'rxjs/operators'
 
-function WrappingDecorator(): PropertyDecorator {
+function WrappingDecorator(prefix?: string): PropertyDecorator {
+  prefix = prefix ? prefix + '.' : ''
+
   return (target: any, propertyName: string | symbol) => {
     const descriptor = Reflect.getOwnPropertyDescriptor(target, propertyName)
 
@@ -16,14 +18,14 @@ function WrappingDecorator(): PropertyDecorator {
           expect(propertyName in this).toBe(true)
 
           if (descriptor.get) {
-            return `wrapGet(${descriptor.get.call(this)})`
+            return `${prefix}wrapGet(${descriptor.get.call(this)})`
           }
         },
         set(value) {
           expect(propertyName in this).toBe(true)
 
           if (descriptor.set) {
-            descriptor.set.call(this, `wrapSet(${value})`)
+            descriptor.set.call(this, `${prefix}wrapSet(${value})`)
           }
         }
       })
@@ -34,12 +36,12 @@ function WrappingDecorator(): PropertyDecorator {
         get() {
           expect(propertyName in this).toBe(true)
 
-          return `wrapGet(${target['@WrappingDecorator.value']})`
+          return `${prefix}wrapGet(${target['@WrappingDecorator.value']})`
         },
         set(value) {
           expect(propertyName in this).toBe(true)
 
-          target['@WrappingDecorator.value'] = `wrapSet(${value})`
+          target['@WrappingDecorator.value'] = `${prefix}wrapSet(${value})`
         }
       })
     }
@@ -142,7 +144,7 @@ describe('BindObservable', () => {
 
     instance.myProp = 'myValue'
 
-    expect(await instance.myProp$.pipe(take(1)).toPromise()).toEqual('wrapSet(myValue)')
+    expect(await instance.myProp$.pipe(take(1)).toPromise()).toEqual('wrapGet(wrapSet(myValue))')
   })
 
   it('lets observable emit getter value on property assignment if the property has another decorator AFTER @BindObservable(emitRawSetterValue: false (default))', async () => {
@@ -158,6 +160,24 @@ describe('BindObservable', () => {
     instance.myProp = 'myValue'
 
     expect(await instance.myProp$.pipe(take(1)).toPromise()).toEqual('wrapGet(wrapSet(myValue))')
+  })
+
+  it('lets observable emit getter value on property assignment if the property has another decorator BEFORE and AFTER @BindObservable(emitRawSetterValue: false (default))', async () => {
+    class TestClass {
+      @WrappingDecorator('before')
+      @BindObservable()
+      @WrappingDecorator('after')
+      public myProp: string | undefined
+      public myProp$!: Observable<string | undefined>
+    }
+
+    const instance = new TestClass()
+
+    instance.myProp = 'myValue'
+
+    expect(await instance.myProp$.pipe(take(1)).toPromise()).toEqual(
+      'before.wrapGet(after.wrapGet(after.wrapSet(before.wrapSet(myValue))))'
+    )
   })
 
   it('lets observable emit raw setter value on property assignment if the property has another decorator AFTER @BindObservable(emitRawSetterValue: true)', async () => {

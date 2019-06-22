@@ -74,7 +74,7 @@ class TestClass {
     return this._myProp
   }
 
-  // This does not work!
+  // This does not work :-(
   @BindObservable()
   public set myProp(value: string | undefined) {
     this._myProp = value
@@ -82,11 +82,10 @@ class TestClass {
 
   private myProp$!: Observable<string | undefined>;
 
-  // This should work, but the decorator order may be important 
-  // if the other decorators modify the return value of the get accessor.
-  @AnyOtherDecorator()
+  // This works even if DecoratorX and DecoratorY modify the property accessors
+  @DecoratorX()
   @BindObservable()
-  @AnotherDecorator()
+  @DecoratorY()
   private myPropWithMultipleDecorators: string = 'initialValue';
   private myPropWithMultipleDecorators$!: Observable<string>;
 }
