@@ -12,6 +12,6 @@ export interface BindObservableOpts {
   emitRawSetterValue?: boolean
 }
 
-export function isBindObservableOpts(pet: any): pet is BindObservableOpts {
-  return pet && typeof pet === 'object'
+export function isBindObservableOpts(obj: any): obj is BindObservableOpts {
+  return obj && typeof obj === 'object'
 }
