@@ -1,0 +1,31 @@
+name: Bump Version
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Bump Version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: PSanetra/git-semver-actions/next@v1
+        id: next_version
+      - uses: PSanetra/git-semver-actions/latest@v1
+        id: latest_version
+      - uses: PSanetra/git-semver-actions/markdown-log@v1
+        id: markdown_log
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        if: ${{ steps.next_version.outputs.version != steps.latest_version.outputs.version }}
+        env:
+          # With github.token the publish workflow is never triggered
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+        with:
+          tag_name: "v${{ steps.next_version.outputs.version }}"
+          body: "${{ steps.markdown_log.outputs.changelog }}"
+          release_name: Release ${{ steps.next_version.outputs.version }}
+          draft: false
+          prerelease: false
