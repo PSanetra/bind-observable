@@ -1,4 +1,4 @@
-import { BindObservable } from '../src/bind-observable'
+import { BindObservable } from './bind-observable'
 import { Observable } from 'rxjs'
 import { take } from 'rxjs/operators'
 
@@ -27,7 +27,7 @@ function WrappingDecorator(prefix?: string): PropertyDecorator {
           if (descriptor.set) {
             descriptor.set.call(this, `${prefix}wrapSet(${value})`)
           }
-        }
+        },
       })
     } else {
       Object.defineProperty(target, propertyName, {
@@ -42,7 +42,7 @@ function WrappingDecorator(prefix?: string): PropertyDecorator {
           expect(propertyName in this).toBe(true)
 
           target['@WrappingDecorator.value'] = `${prefix}wrapSet(${value})`
-        }
+        },
       })
     }
   }

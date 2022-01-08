@@ -3,11 +3,11 @@ import { BindObservableOpts, isBindObservableOpts } from './bind-observable-opti
 
 type SubjectByProp = Map<string, ReplaySubject<any>>
 
-const subjects: WeakMap<Object, SubjectByProp> = new WeakMap()
+const subjects: WeakMap<object, SubjectByProp> = new WeakMap()
 
 type ValueByProp = Map<string, any>
 
-const values: WeakMap<Object, ValueByProp> = new WeakMap()
+const values: WeakMap<object, ValueByProp> = new WeakMap()
 
 function subject(instance: any, key: string): ReplaySubject<any> {
   let subjectByProp = subjects.get(instance)
@@ -38,13 +38,13 @@ function valueMap(instance: any): ValueByProp {
   return valueMap
 }
 
-function defineObservableProperty(target: Object, observableKey: string): void {
+function defineObservableProperty(target: object, observableKey: string): void {
   Object.defineProperty(target, observableKey, {
     configurable: true,
     enumerable: false,
     get() {
       return subject(this, observableKey)
-    }
+    },
   })
 }
 
@@ -58,12 +58,12 @@ function redefineSimpleProperty(target: any, propertyKey: string, observableKey:
     },
     get() {
       return valueMap(this).get(propertyKey)
-    }
+    },
   })
 }
 
 function redefineAccessorProperty(
-  target: Object,
+  target: object,
   propertyKey: string,
   observableKey: string,
   emitRawSetterValue: boolean,
@@ -93,7 +93,7 @@ function redefineAccessorProperty(
       }
 
       return descriptor.get.call(this)
-    }
+    },
   })
 }
 
